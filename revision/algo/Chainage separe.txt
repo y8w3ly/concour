@@ -1,0 +1,81 @@
+ 
+f fonction de hachage
+ 
+
+tab structure 
+      val entier 
+      vide boolean
+      lien ptr de maillon
+fin
+tai la taille du tableau
+
+/*****************************************************************************************************************************************************************/
+procedure recherche (t:tab,n:entier,var p:ptr de maillon,prec ptr de maillon,trouv:bool)
+
+debut 
+ 
+prec=nill
+i:f(n)
+p=t[i].lien
+     si t[i].val == n 
+	 trouv = vrai
+     fsi
+     sinon
+         
+         tq   (p <> nil )et (non trouv )) faire
+               si valeur (p ) == n 
+	 	trouv = vrai
+              	fsi
+               sinon
+                 prec=p
+		 p=suivant (p)  
+               fsin
+         ftq
+     fsin
+
+fin 
+
+/*********************************************************************************************************************************************************************/
+
+
+procedure insertion (t:tab,n:entier)
+debut 
+   	recherche (t,n,p,prec,trouv)
+   	si (non trouv)
+ 		allouer (q)
+ 		aff_val(q,n)
+		si (p <> nill )
+			aff_adr (p,q)
+		fsi
+		sinon
+			p=q
+			t[i].vide=faux
+		fsin
+		aff_adr(q,nill)
+                nbinser++
+        fsi
+        sinon
+                 ecrire (il existe deja )
+        fsin
+   
+fin
+
+
+procedure suppression  (t:tab,n:entier)
+
+debut 
+i=f(n)      
+      recherche (t,n,p,prec,trouv)
+      si trouv 
+         si (prec=nil)
+             t[i].lien=nil
+             t[i].vide=vrai
+         fsi
+	 sinon
+ 	 aff_adr(prec,suivant(p))
+	 liberer (p)
+         fsin
+       fsi
+fin
+
+           

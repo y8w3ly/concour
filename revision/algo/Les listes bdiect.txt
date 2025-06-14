@@ -1,0 +1,198 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct maillon
+{    int val;
+     struct maillon *next;
+     struct maillon *previ;
+
+
+}maillon;
+
+/*****************************LE MODELE DES LISTES BIDIRECTIONNELES**********************************************************/
+void allouer (maillon**nouveau)
+
+ {
+ *nouveau = (maillon*)malloc(sizeof(maillon));
+ }
+//////////////////////////////////////////////////////////////*********************************/////////////////////
+ void liberer(maillon**ancien)
+ {
+   free(*ancien) ;
+   *ancien=NULL;
+ }
+/****************************************************************************************************************/
+  void aff_adrs(maillon*p,maillon*q)
+  {
+      p->next=q;
+  }
+  /**************************************************************************************************************/
+
+void aff_adrp(maillon*p,maillon*q)
+  {
+      p->previ=q;
+  }
+/*********************************************************************************************************************/
+void aff_val(maillon*p,int valeur)
+{
+    p->val=valeur;
+}
+
+/*******************************************************************************************************************/
+maillon*suivant (maillon*p)
+{
+    return p->next;
+}
+/**********************************************************************************************************************/
+maillon*precedant (maillon*p)
+{
+    return p->previ;
+}
+
+/****************************************************************************************************************************/
+int valeur (maillon*p)
+{
+    return p->val;
+}
+/*********************************************************************************************************************/
+
+/*********************************************creation d'une liste *********************************************************/
+void creation (maillon**tete,int n)
+{
+    maillon*p;maillon*q;
+   int i=0,val=0;
+    *tete=NULL;
+    allouer(&p);
+    for (i=0;i<n;i++)
+    {
+        printf("\n donner la valeur de l element %d ",i+1);
+        scanf("%d",&val);
+        allouer(&q);
+        aff_val(q,val);
+        aff_adrp(q,p);
+        aff_adrs(p,q);
+        if (*tete==NULL)
+           {
+               *tete=q;
+               aff_adrp(*tete,NULL);
+           }
+        p=q;
+
+    }
+    aff_adrs(q,NULL);
+
+    }
+
+/********************************************affichage*********************************************************************/
+void affichage(maillon*tete)
+{
+    if (tete==NULL)
+    {
+        printf("une liste vide");
+    }
+    else
+    {
+       while (tete!=NULL)
+       {
+            printf(" %d  ",valeur(tete));
+            tete=suivant(tete);
+       }
+    }
+}
+/******************************************accee valeur **************************************************************/
+void  accesval (maillon*tete,int val,maillon **prec ,maillon**p)
+{
+     int fin=0;
+    *prec=NULL;*p=tete;
+     while (!fin)
+    {
+        if (*p==NULL)
+        {
+            fin=1;
+        }
+        else
+        {
+            if (valeur(*p)==val)
+            {
+                fin=1;
+            }
+            else
+            {
+                *prec=*p;
+                *p=suivant(*p);
+            }
+        }
+    }
+}
+/*********************************************recherche par position *********************************************************/
+void  accepos(maillon*tete,maillon **prec,maillon**p,int pos)
+{
+    int fin=0,cpt=1;
+    *p=tete;*prec=NULL;
+    while (!fin)
+    {
+        if (*p==NULL)
+        {
+            fin=1;
+        }
+        else
+        {
+            if (pos==cpt)
+            {
+                fin=1;
+            }
+            else
+            {
+                *prec=*p;
+                *p=suivant(*p);
+                cpt++;
+            }
+        }
+
+    }
+}
+/********************************************insertion d'une valeur **********************************************************/
+void inserval(maillon**tete,int val,int pos)
+{
+  maillon*p;maillon*q;maillon*prec;
+   accepos(*tete,&prec,&p,pos);
+  allouer(&q);
+  aff_val(q,val);
+  aff_adrs(q,p);
+    if (prec==NULL)
+  {
+     *tete=q;
+     aff_adrp(p,q);
+  }
+  else
+  {
+    aff_adrp(q,prec);
+    aff_adrs(prec,q);
+  }
+
+}
+/***************************************************************************************/
+void suppelem(maillon**tete,int val)
+{
+ maillon*q,*prec,*p;
+ accesval(*tete,val,&prec,&p);
+    if (p != NULL)
+    {
+        if (prec == NULL)
+        {
+            *tete=suivant(*tete);
+        }
+        else
+        {
+           aff_adrs(prec,NULL);
+           if (suivant(p) != NULL)
+            {
+                aff_adrp(suivant(p),prec);
+                aff_adrs(prec,suivant(p));
+            }
+        }
+    }
+
+}
+
+/*****************************************************FIN **********************************************************************/

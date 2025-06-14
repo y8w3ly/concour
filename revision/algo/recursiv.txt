@@ -1,0 +1,268 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int fact (int n)
+{
+    if (n<2) return 1;
+    else return n*fact(n-1);
+
+}
+
+int some(int n)
+{
+    if (n==1) return 1;
+    else return some(n-1)+n;
+
+}
+
+int quotient(int a,int b)
+{
+    if (a<b) return 0;
+    else return (quotient(a-b,b)+1);
+}
+
+int reste (int a,int b)
+{
+    if (a%b==0) return 0;
+    else return (reste(a-1,b)+1);
+}
+
+int pgcd(int a,int b)
+{
+    if (a==b){return b;}
+    else
+    {
+        if (a>b){ a=a-b;}
+        else {b=b-a;}
+        return pgcd (a,b);
+    }
+}
+
+
+int somrec(int a,int b)
+{
+    if (b==0) return a;
+    else return somrec(a,b-1)+1;
+}
+
+int produit(int a,int b)
+{
+    if (b==0) return b;
+    else {
+    if (b==1) return a;
+    else {
+        return (produit(a,b-1)+a);
+    }
+}}
+/****************************Les tableaux ***************************************************************************/
+void writ1d(int t[],int tai)
+{
+    int i=0;
+    for (i=0;i<tai;i++)
+    {
+        printf (" %d  ",t[i]);
+    }
+}
+void alea1d(int t[],int tai)
+{
+    int i=0;
+    for (i=0;i<tai;i++)
+    {
+      t[i]= (rand() % (10-1+1)) + 1;
+    }
+}
+
+
+int maxtab (int t[],int tai)
+{
+    int max =t[tai-1];
+    if (tai-1==0) return t[tai-1];
+    else {
+        if (max<maxtab(t,tai-1)) {max=maxtab(t,tai-1);}
+        return max ;
+}
+}
+
+int mintab(int t[],int tai)
+{
+ int min =t[tai-1];
+    if (tai-1==0) return t[tai-1];
+    else {
+        if (min>mintab(t,tai-1)) {min=mintab(t,tai-1);}
+        return min ;
+}
+}
+
+int somtab (int t[],int tai)
+{
+    if (tai-1==0) return t[tai-1];
+    else {
+        return somtab(t,tai-1)+t[tai-1];
+    }
+}
+int protab(int t[],int tai)
+{
+    if (tai-1==0) return t[tai-1];
+    else {
+        return protab(t,tai-1)*t[tai-1];
+    }
+}
+float moytab(int t[],int tai)
+{
+    if (tai==1) return t[tai-1];
+    else return (moytab(t,tai-1)*(tai-1)+t[tai-1])/tai;
+}
+
+
+int rechtricho(int t[],int x,int deb,int fin)
+{
+    int tier1,tier2;
+    tier1=(fin-deb)/3+deb;tier2=(2*(fin-deb))/3+deb;
+    if (deb>fin) return -1;
+    else
+    {
+        if (x==t[tier1]) return tier1;
+        else {
+            if (x==t[tier2]) return tier2;
+            else {
+                if (x<t[tier1])  return rechtricho(t,x,deb,tier1-1);
+                else {
+                    if (x<t[tier2]) return rechtricho(t,x,tier1+1,tier2-1);
+                     else  return rechtricho(t,x,tier2+1,fin);
+                }}}}}
+/************************************Les LLC********************************************************************/
+typedef struct maillon
+              {
+               int val;
+               struct maillon*next;
+               }maillon;
+
+void allouer (maillon**nouveau)
+
+ {
+ *nouveau = (maillon*)malloc(sizeof(maillon));
+ }
+//////////////////////////////////////////////////////////////*********************************/////////////////////
+ void liberer(maillon**ancien)
+ {
+   free(*ancien) ;
+   *ancien=NULL;
+ }
+/****************************************************************************************************************/
+  void aff_adr(maillon*p,maillon*q)
+  {
+      p->next=q;
+  }
+  /**************************************************************************************************************/
+
+void aff_val(maillon*p,int valeur)
+{
+    p->val=valeur;
+}
+
+/*******************************************************************************************************************/
+maillon*suivant (maillon*p)
+{
+    return p->next;
+}
+/**********************************************************************************************************************/
+int valeur (maillon*p)
+{
+    return p->val;
+}
+
+/******************creation d' une liste ***************************************************************************/
+void creation(int n,maillon**tete)
+{
+    *tete=NULL;
+    maillon*p=NULL;maillon*q;
+    int i=0;int val;
+
+    if (n==0)
+    {
+        *tete=NULL;
+    }
+    else
+    {
+    allouer(&p);
+    for (i=1;i<=n;i++)
+    {
+        allouer(&q);
+        //val=srand(100)
+        aff_val(q,2*i);
+        aff_adr(p,q);
+
+        if (*tete==NULL)
+        {
+          *tete=q;
+        }
+          p=q;
+
+    }
+         aff_adr(p,NULL);
+    }
+}
+/**********************************affichage d une liste *******************************************************************/
+void affichage (maillon*tete)
+{
+    if (tete==NULL)
+    {
+        printf(" \n une liste vide");
+    }
+    while  (tete != NULL )
+    {
+        printf("    %d   ",valeur(tete));
+        tete=suivant(tete);
+    }
+}
+/*************************************************************************************************************************/
+inverse(maillon**tete)
+{
+    maillon *p,*q;
+    if (*tete!=NULL){
+    if (suivant(*tete)!=NULL)
+    {
+        p=suivant(*tete);
+        q=p;
+        inverse(&p);
+        aff_adr(q,*tete);
+        aff_adr(*tete,NULL);
+        *tete=p;
+    }
+}}
+/**************************************************************************************************************************/
+affichageinvers(maillon*tete)
+{
+    if (tete!=NULL)
+    {
+            affichageinvers(suivant(tete));
+            printf("     %d     ",valeur(tete));
+    }
+}
+/**************************************************************************************************************************/
+maillon* cherche(maillon*tete,int n)
+{
+    if (tete!=NULL)
+    {
+        if (valeur(tete)==n)
+        {
+           return tete;
+        }
+        else
+        {
+            cherche(suivant(tete),n);
+        }
+    }
+}
+/*****************************************************************************************************************************/
+void supprim(maillon**tete)
+{
+    if (*tete!=NULL)
+    {
+        *tete=suivant(*tete);
+        supprim(tete);
+        allouer(tete);
+    }
+
+}
+/****************************************************************************************************************************/

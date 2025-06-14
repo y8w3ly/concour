@@ -1,0 +1,321 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<time.h>
+
+typedef struct noeud noeud ;
+struct noeud {
+       int info;
+       struct noeud* filsdroit;
+       struct noeud* filsgauche;
+};
+/***************************************************Creation ****************************************************************/
+noeud* creenoeud(int v)
+{
+    noeud *n;
+    n=(noeud*)malloc(sizeof (noeud));
+    n->info=v;
+    n->filsdroit=NULL;
+    n->filsgauche=NULL;
+    return n;
+}
+/*************************************************Liberer*********************************************************************/
+void librenoeud(noeud*n)
+{
+   free(n);
+   n=NULL;
+}
+/**********************************************************Affect fils gauche***********************************************/
+void aff_fg(noeud *p,noeud* q)
+{
+    p->filsgauche=q;
+}
+/********************************************************Affect fils droit **************************************************/
+void aff_fd(noeud* p,noeud* q)
+{
+    p->filsdroit=q;
+}
+/*****************************************************Affect info ***********************************************************/
+void aff_info(noeud*n,int val)
+{
+    n->info=val;
+}
+/***************************************************************Information***************************************************/
+int info(noeud*n)
+{
+    return n->info;
+}
+/********************************************************Le fils gauche *******************************************************/
+noeud* fgauche(noeud*n)
+{
+  return n->filsgauche;
+}
+/********************************************************Le fils droit *******************************************************/
+noeud* fdroit(noeud*n)
+{
+  return n->filsdroit;
+}
+/********************************************************Nombre de noeuds ***************************************************/
+int nbnoeud(noeud*n)
+{
+    if (n==NULL) return 0;
+    else
+        return (nbnoeud(fgauche(n))+nbnoeud(fdroit(n))+1);
+}
+/******************************************************Nombre de feuilles ***************************************************/
+int nbfeuilles(noeud*n)
+{
+    if (n==NULL) return 0;
+    else
+    {
+        if ((fgauche(n)==NULL)&&(fdroit(n)==NULL)) return 1;
+        else return nbfeuilles(fgauche(n))+nbfeuilles(fdroit(n));
+    }}
+/***********************************************La somme des noeuds **********************************************************/
+int somnoeud(noeud*n)
+{
+    if (n==NULL) return 0;
+        else
+    {
+        return somnoeud(fgauche(n))+somnoeud(fdroit(n))+info(n);
+    }}
+/*****************************************************MAximum ***********************************************************/
+int maximum(int a,int b)
+{
+    if (a>b) return a;
+    else return b;
+}
+ /*********************************************La profendur d'un arbre *******************************************************/
+ int profend(noeud*n)
+ {
+     if (n==NULL) return 0;
+     else return maximum(profend(fgauche(n)),profend(fdroit(n)))+1;
+ }
+/********************************************Strictement binaire *************************************************************/
+int strbinair(noeud *n)
+{
+    if (n==NULL) return 0;
+    else {
+        if (strbinair(fgauche(n))!=strbinair(fdroit(n))) return 0;
+        else return 1;
+    }
+}
+
+/***********************************************Recherche dans un arbre binaire ***********************************************/
+void recherche(int val,noeud*R,noeud**P,noeud**pere)
+{
+    *P=NULL;*pere=NULL;
+    int trouv=0;
+    if (R!=NULL)
+    {
+        *P=R;
+        *pere=NULL;
+        while ((!trouv)&&(*P!=NULL))
+        {
+            if (info(*P)==val) trouv =1;
+            else
+            {
+                *pere=*P;
+                if (val>info(*P)) *P=fdroit(*P);
+                else *P=fgauche(*P);
+            }
+        }
+    }
+}
+/*********************************************L insertion d un element a un arbre**********************************************/
+void inser(int val,noeud**R)
+{
+    noeud*p,*pere,*q;
+    if (*R==NULL)  *R=creenoeud(val);
+    else
+    {
+        recherche(val,*R,&p,&pere);
+        if (p==NULL)
+        {
+            q=creenoeud(val);
+            if(info(pere)>val) aff_fg(pere,q);
+            else aff_fd(pere,q);
+        }
+        else {printf("\n La valeur existe deja ");}
+    }
+
+}
+/***********************************************creatoin d un arbre ***********************************************************/
+void charge(noeud**R,int n)
+{
+    srand(time(NULL));
+    int i=0;
+    for(i=0;i<=n;i++)
+    {
+        inser(rand()% (100)+0,R);
+    }
+}
+/***********************************************Inoordre*********************************************************************/
+void inordre(noeud*R)
+{
+    if (R!=NULL)
+    {
+        inordre(fgauche(R));
+        printf("%d",info(R));
+        inordre(fdroit(R));
+    }
+}
+/*******************************************Postordre***********************************************************************/
+void postordre(noeud*R)
+{
+    if (R!=NULL)
+        postordre(fgauche(R));
+        postordre(fdroit(R));
+        printf("%d",info(R));
+
+}
+/***********************************************Preordre***********************************************************************/
+void preordre(noeud *R)
+{
+    if (R!=NULL)
+        printf("%d",info(R));
+        preordre(fgauche(R));
+        preordre(fdroit(R));
+}
+/************************************************Parcours par niveau *******************************************************************/
+int niveau(noeud *R)
+{
+    int h=0,hg=0,hd=0;
+         if(R==NULL)  h=0;
+         else
+         {
+             hg=niveau(fgauche(R));
+             hd=niveau(fdroit(R));
+             h=(hg>hd?hg:hd)+1;
+         }
+     return h;
+}
+/******************************************Connect ds suppression**************************************************************/
+void connecter(noeud*p,noeud*q,noeud*pere,noeud**R)
+{
+       if (pere==NULL) *R=q;
+       else {
+        if (p==fdroit(pere)) aff_fd(pere,q);
+        else aff_fg(pere,q);
+}}
+/********************************************Supprimer un element ************************************************************/
+void suppr(int val,noeud**R)
+{
+    noeud*q=NULL,*p=NULL,*pere=NULL;
+    if (*R!=NULL){
+    recherche(val,*R,&p,&pere);
+    if (p!=NULL)
+    {
+        if (fgauche(p)==NULL) {q=fdroit(p); connecter(p,q,pere,R);}
+        else {
+                if (fdroit(p)==NULL)
+                {q=fgauche(p);  connecter(p,q,pere,R);}
+        else {
+            q=fdroit(p);
+            while (fgauche(q)!=NULL)
+            {
+                pere=q;
+                q=fgauche(q);
+            }
+            aff_info(p,info(q));
+            connecter(q,fdroit(q),pere,R);
+            p=q;
+        }}
+        librenoeud(p);
+    }
+}
+}
+/***********************************Affichage ****************************************************************************/
+int nb_pos(int a)
+{
+    int ret;
+    int b=a;
+    for(ret=1;a/10;ret++,a/=10);
+    if (b<0) ret++;
+    return ret;
+}
+
+int Hauteur( noeud* arbre )
+{
+    int hg=0,hd=0,h=0 ;
+    if( arbre == NULL )
+         h=0;
+    else
+    {
+        hg = Hauteur(fgauche(arbre) ) ;
+        hd = Hauteur( fdroit(arbre) ) ;
+       	h=(hg>hd?hg:hd)+1;
+    }
+    return h;
+}
+
+void DrawTree_Horizonral(noeud* arbre,char type, int x, int y,int level)
+{
+    if(arbre!=NULL)
+    {
+        int a=level-1;
+        switch (type)
+        {
+            case 'r'://racine
+            /*on calcule les coordonées du racine slon le profonder de l'arbre ...*/
+            x=1;
+            y=pow(2,Hauteur(arbre)-1);
+            gotoxy(x,y);
+            printf("[%d]",info(arbre));
+            printf("%c%c",196,180);
+            DrawTree_Horizonral(fdroit(arbre),'d',x+nb_pos(info(arbre))+3,y-1,Hauteur(arbre));
+            DrawTree_Horizonral(fgauche(arbre),'g',x+nb_pos(info(arbre))+3,y+1,Hauteur(arbre));
+            break;
+
+            case 'd'://droit
+
+            while(a>=0)
+            {
+                a--;
+                gotoxy(x,y);
+                y--;
+                printf("%c",179);
+            }
+            gotoxy(x,y);
+            printf("%c",218);
+            textcolor(10);
+            printf("(%d)",info(arbre));
+            textcolor(15);
+            printf("%c%c",196,180);
+            DrawTree_Horizonral(fdroit(arbre),'d',x+nb_pos(info(arbre))+2+2,y-1,Hauteur(arbre)-1);
+            DrawTree_Horizonral(fgauche(arbre),'g',x+nb_pos(info(arbre))+2+2,y+1,Hauteur(arbre)-1);
+
+            break;
+
+            case 'g'://gauche
+            textcolor(15);
+            while(a>=0)
+            {
+                a--;
+                gotoxy(x,y);
+                y++;
+                printf("%c",179);
+            }
+            gotoxy(x,y);
+            printf("%c",192);
+            textcolor(12);
+            printf("(%d)",info(arbre));
+            textcolor(15);
+            printf("%c%c",196,180);
+            DrawTree_Horizonral(fdroit(arbre),'d',x+nb_pos(info(arbre))+2+2,y-1,Hauteur(arbre)-1);
+            DrawTree_Horizonral(fgauche(arbre),'g',x+nb_pos(info(arbre))+2+2,y+1,Hauteur(arbre)-1);
+            break;
+        }
+
+    }else
+     {
+
+        gotoxy(x,y);
+        if(type=='d')
+        printf("%c%c",218,196);
+        else
+        printf("%c%c",192,196);;
+        textcolor(14);
+        printf("%c",16);
+        textcolor(7);
+     }
+}

@@ -1,0 +1,115 @@
+procedure inordre (R:ptr de noeud)
+var p:pile de noeuds
+    parcours,fin boolean
+debut 
+tq non fin
+dtq
+   tq ((fg(r)<>nil)et (non parcours)) 
+     dtq 
+          empiler (p,r)
+          r=fg(r)     
+     ftq  
+   ecrire (valeur(r))
+   si fd(r)<>nil 
+     dsi
+       r=fd(r)
+       parcours=faux
+     fsi
+   sinon 
+     si (non pile vide (p))
+       dsi 
+           depiler (p,r)
+           parcours=vrai
+        fsi
+    sinon
+        fin= vrai;
+    finsin
+   finsin    
+
+ftq
+********************************************************************************************************************************************************************
+  parcours postordre
+
+ void postordrec (noeud *r)
+ {
+     pile *p;
+     creerpile(&p);
+     empiler(&p,r);
+     while ((r!=NULL) && ( !pilevide(p)))
+     {
+         while (fgauche(r)!=NULL)
+         {
+            if (!fdroit(r)){empiler(&p,fdroit(r));}
+             r=fgauche(r);
+         }
+         printf("%d", info(r) );
+         depiler(&p,&r);
+
+         r=fdroit(r);
+     }
+ }
+ /*************************************************************************************************************************************************************/
+fonction nbfeuille (r :ptr de noeud) : entier
+var n: entier
+debut 
+tq (r<> nil )
+       tq (r<>nil )
+            si fd(r)<>nil 
+                empiler (p,r)
+            fsi
+	    r=fg(r)
+	ftq
+        si fd(r)<>nil 
+           r=fd(r)
+        fsi
+        sinon 
+ 	   n++
+ 	   depiler(p,r)
+           r=fd(r)
+        fsin
+ftq
+nbfeuille = n
+fin
+*********************************************************************************************************************************************************	
+
+procedure parcourniveau (r:ptr de noeud )
+var f file de noeud
+debut 
+enfiler (f,r)
+tq (r<>nil ) et (non filevide(f))
+	defiler(f,r)
+        ecrire (valeur(r))
+        si fg (r)<>nil 
+             enfiler (f,r)
+        fsi
+        si fd(r)<>nil
+ 	     enfiler (f,r)
+        fsi
+ftq
+fin
+
+
+
+ 
+
+
+fin
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      	    

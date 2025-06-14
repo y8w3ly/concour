@@ -1,0 +1,405 @@
+#include<stdio.h>
+#include<stdlib.h>
+/****************************************le modele de LLC *****************************************************************/
+typedef struct maillon
+              {
+               int val;
+               struct maillon*next;
+               }maillon;
+
+void allouer (maillon**nouveau)
+
+ {
+ *nouveau = (maillon*)malloc(sizeof(maillon));
+ }
+//////////////////////////////////////////////////////////////*********************************/////////////////////
+ void liberer(maillon**ancien)
+ {
+   free(*ancien) ;
+   *ancien=NULL;
+ }
+/****************************************************************************************************************/
+  void aff_adr(maillon*p,maillon*q)
+  {
+      p->next=q;
+  }
+  /**************************************************************************************************************/
+
+void aff_val(maillon*p,int valeur)
+{
+    p->val=valeur;
+}
+
+/*******************************************************************************************************************/
+maillon*suivant (maillon*p)
+{
+    return p->next;
+}
+/**********************************************************************************************************************/
+int valeur (maillon*p)
+{
+    return p->val;
+}
+/****************************************************************************************************************/
+/******************creation d' une liste ***************************************************************************/
+void creation(int n,maillon**tete)
+{
+    maillon*p=NULL;maillon*q;
+    int i=0;int val;
+
+    if (n==0)
+    {
+        *tete=NULL;
+    }
+    else
+    {
+    allouer(&p);
+    for (i=1;i<=n;i++)
+    {
+        allouer(&q);
+        //val=srand(100)
+        aff_val(q,2*i);
+        aff_adr(p,q);
+
+        if (*tete==NULL)
+        {
+          *tete=q;
+        }
+          p=q;
+
+    }
+         aff_adr(p,NULL);
+    }
+}
+/**********************************affichage d une liste *******************************************************************/
+void affichage (maillon*tete)
+{
+    if (tete==NULL)
+    {
+        printf(" \n une liste vide");
+    }
+    while  (tete != NULL )
+    {
+        printf("    %d   ",valeur(tete));
+        tete=suivant(tete);
+    }
+}
+
+/*************************************** longeur d une liste *******************************************/
+int longeur(maillon *tete)
+
+{
+    int l=0;
+    while  (tete != NULL )
+    {
+        l++;
+         tete=suivant(tete);
+    }
+     return l;
+}
+/****************************** supprimer un element ****************************************************************/
+void supprelem (maillon**tete,int val)
+{
+    maillon*p;maillon*prec;
+    accesval(*tete,val,&prec,&p);
+    if (p != NULL)
+    {
+        if (p==*tete)
+     {
+        *tete=suivant(*tete);
+     }
+     else
+     {
+      aff_adr(prec,suivant(p));
+     }
+     liberer(&p);
+    }
+    else
+        printf("\n L element n existe pas");
+}
+
+/**********************************************rechercher  valeur dans une liste *********************************/
+void  accesval (maillon*tete,int val,maillon **prec ,maillon**p)
+{
+     int fin=0;
+    *prec=NULL;*p=tete;
+     while (!fin)
+    {
+        if (*p==NULL)
+        {
+            fin=1;
+        }
+        else
+        {
+            if (valeur(*p)==val)
+            {
+                fin=1;
+            }
+            else
+            {
+                *prec=*p;
+                *p=suivant(*p);
+            }
+        }
+
+    }
+
+
+
+}
+/******************************************************** rechercher par position ****************************************/
+void  accepos(maillon*tete,maillon **prec,maillon**p,int pos)
+{
+    int fin=0,cpt=1;
+    *p=tete;*prec=NULL;
+    while (!fin)
+    {
+        if (*p==NULL)
+        {
+            fin=1;
+        }
+        else
+        {
+            if (pos==cpt)
+            {
+                fin=1;
+            }
+            else
+            {
+                *prec=*p;
+                *p=suivant(*p);
+                cpt++;
+            }
+        }
+
+    }
+
+}
+/*************************************insertion une valeur dans une position précise***************************************/
+void inservalpos(maillon **tete,int pos,int val)
+{
+    maillon *q,*p,*prec;
+    allouer(&q);
+    aff_val(q,val);
+    aff_adr(q,NULL);
+    if (pos==1)
+    {
+        aff_adr(q,*tete);
+        *tete=q;
+    }
+     else
+     {
+        accepos(*tete,&prec,&p,pos);
+        if (p!=NULL)
+        {
+            aff_adr(q,p);
+            aff_adr(prec,q);
+        }
+        else
+        {
+            if (prec==NULL)
+            {
+                *tete=q;
+            }
+            else
+            {
+                aff_adr(prec,q);
+                aff_adr(q,NULL);
+            }
+        }
+     }
+}
+
+/******************inverser une liste *******************************************************************************/
+inverse(maillon**tete)
+{
+    maillon *p,*q;
+    if (*tete!=NULL){
+    if (suivant(*tete)!=NULL)
+    {
+        p=suivant(*tete);
+        inverse(&p);
+        aff_adr(suivant(*tete),*tete);
+        aff_adr(*tete,NULL);
+        *tete=p;
+    }
+}}
+
+
+
+/*************************************   interclasser deux listes   *******************************************************************/
+
+void interclass2(maillon **tete1,maillon*tete2)//maillon **inter)
+{
+     maillon*p;
+     p=*tete1;
+     while ((p != NULL) && (tete2 != NULL))
+    {
+
+         if (valeur(p)<=valeur(tete2))
+         {
+
+             p=suivant(p);
+         }
+         else
+         {
+             inservalor(tete1,valeur(tete2));
+
+             tete2=suivant(tete2);
+         }
+
+
+    }
+    if (p==NULL)
+    {
+        while (tete2 != NULL)
+        {
+            inservalor(tete1,valeur(tete2));
+            tete2=suivant(tete2);
+        }
+    }
+//
+}
+void fusion(maillon**tete1,maillon *tete2)
+{
+    maillon *p=*tete1;//pour sauvegarder la tete de la liste
+    maillon *prec=NULL;
+    maillon *sui=NULL;
+    while ((p != NULL)&&(tete2 != NULL))
+    {
+        if (valeur(p)<valeur(tete2))
+        {
+            prec=p;
+            p=suivant(p);
+        }
+        else
+        {
+            sui=suivant(tete2); //pour sauvgarder l element suivant de la 2eme liste
+            if (prec==NULL) //si on va changer la tete de la liste
+            {
+                aff_adr(tete2,*tete1);
+                *tete1=tete2;
+            }
+            else
+            { aff_adr(prec,tete2);
+            }
+            aff_adr(tete2,p);
+            tete2=sui;
+        }
+    }
+    if (p==NULL)
+    {
+        aff_adr(prec,tete2); // une fois que la liste 01 est terminee on enchaine vers la liste 02
+    }//si la liste 02 est terminee on a rien a faire ..
+}
+
+void eclatt(maillon*tete,maillon**l1,maillon**l2)//sans allocation
+{
+  maillon*p1=NULL,*p2=NULL,*sui;
+  *l1=*l2=NULL;
+  while (tete != NULL)
+  {
+      sui=suivant(tete);
+      if (valeur(tete)%2==0)
+      {
+          if (*l1==NULL)
+          {
+              *l1=tete;
+              p1=tete;
+          }
+          else
+          {
+              aff_adr(p1,tete);
+              p1=tete;
+          }
+      }
+      else
+      {
+
+          if (*l2==NULL)
+          {
+              *l2=tete;
+              p2=tete;
+          }
+          else
+          {
+              aff_adr(p2,tete);
+              p2=tete;
+          }
+      }
+      tete=sui;
+  }
+   aff_adr(p1,NULL);
+   aff_adr(p2,NULL);
+
+}
+void invers(maillon**tete)
+{
+    maillon*p,*prec,*sui;
+    prec=*tete;
+    p=suivant(*tete);
+    aff_adr(prec,NULL);
+    while (p!=NULL)
+    {
+        sui=suivant(p);
+        aff_adr(p,prec);
+        prec=p;
+        p=sui;
+    }
+    *tete=prec;
+
+}
+
+void creeordon(maillon**tete,int n)                   cette procedure cree une llc ordonnee
+{
+  maillon*p,*q;
+  int i,val;
+  allouer(&p);
+  for (i=0;i<n;i++)
+  {
+      printf("\n donner la valeur ");
+      scanf("%d",&val);
+      inservalor(tete,val);
+  }
+}
+void trilist(maillon**tete)
+{
+  //*cpt=0;
+  int perm =0,s=0,m=0;maillon*p;maillon*prec;
+  prec=*tete;
+  if (prec==NULL)
+  {
+      printf(" \n pas de liste a trier \n ");
+  }
+  else
+  {
+   if (suivant(prec)==NULL)
+   {
+       printf(" \n la liste conteient un element donc elle est trie \n");
+   }
+   else
+   {
+      p=suivant(*tete);
+     do
+    {
+      perm=0;
+      p=suivant(*tete);
+      prec=*tete;
+      while (p != NULL )
+      {
+          if (valeur(prec)>valeur(p))
+          {
+              s=valeur(prec);
+              m=valeur(p);
+              aff_val(prec,m);
+              aff_val(p,s);
+              perm=1;
+             // *cpt=*cpt+1;
+          }
+        prec=p;
+        p=suivant(p);
+      }
+    } while (perm);
+   }
+  }
+}

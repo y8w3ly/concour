@@ -1,0 +1,70 @@
+ 
+f fonction de hachage
+ 
+nbinser le nombre des elements inseres 
+tab structure 
+      val entier 
+      vide boolean
+fin
+tai la taille du tableau
+
+/*****************************************************************************************************************************************************************/
+procedure recherche (t:tab,n:entier,var i:entier,trouv:bool)
+
+debut 
+ 
+i:f(n)
+tq  ((nontrouv) et (non t[i].vide)) faire
+     si t[i].val == n 
+	 trouv = vrai
+     fsi
+     sinon
+         i--
+	 si i<0
+           i=tai-1
+         fsi
+     fsin
+ftq
+
+fin 
+
+/*********************************************************************************************************************************************************************/
+
+
+procedure insertion (t:tab,n:entier)
+debut 
+   si (nbinser<tai)
+   	recherche (t,n,i,trouv)
+   	si (non trouv)
+ 		t[i].val=n
+        	t[i].vide=faux
+                nbinser++
+        fsi
+        sinon
+                 ecrire (il existe deja )
+        fsin
+   fsi
+   sinon
+                 ecrire (tab plein )
+  
+fin
+
+
+procedure suppression  (t:tab,n:entier)
+var i,j,r des entier
+debut 
+      recherche (t,n,i,trouv)
+      si trouv 
+            j=i
+            tq (non t[i].vide)
+		r=f(t[i].val)
+                si (r<i<j) ou (i<j<=r) ou (j<=r<i)
+			t[j].val=t[i].val
+                fsi
+                i=i-1
+		si i<0
+			i=tai-1
+		fsi
+            ftq 
+       fsi
+fin

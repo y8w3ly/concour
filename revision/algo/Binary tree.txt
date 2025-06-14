@@ -1,0 +1,287 @@
+#include"tree.h"
+#include<stdio.h>
+#include<stdlib.h>
+#include<conio.h>
+#include<math.h>
+#define true 1
+#define false 0
+
+int dx=1;
+int dy=2;
+TArbre NouvelArbreVide( void )
+{
+    return NULL;
+}
+
+void Ajouter( TArbre* arbre , int val )
+{
+    if( *arbre == NULL )
+    {
+        *arbre = ( TArbre )malloc( sizeof( TNoeud ) );
+        (*arbre)->valeur = val ;
+        (*arbre)->gauche = NULL ;
+        (*arbre)->droit = NULL ;
+    }
+    else
+    {
+        if( val < (*arbre)->valeur )
+        {
+                Ajouter( &(*arbre)->gauche , val ) ;
+        }
+        else
+        {
+                Ajouter( &(*arbre)->droit , val ) ;
+        }
+    }
+}
+
+//**************************************************************
+
+int chercher(TArbre arbre,int v)
+ {
+	int trouve=false;
+
+		while(arbre&&!trouve)
+		{
+			if(arbre->valeur==v)
+				trouve=true;
+			else
+			{
+
+				if(v<arbre->valeur)
+					arbre=arbre->gauche;
+				else
+					arbre=arbre->droit;
+
+			}
+
+		}//while
+	return trouve;
+}
+
+//**************************************************************
+void Afficher1( TArbre arbre )
+{
+    if( arbre != NULL )
+    {
+        printf( "%d " , arbre->valeur ) ;
+        Afficher1( arbre->gauche ) ;
+        Afficher1( arbre->droit ) ;
+    }
+}
+void Afficher2( TArbre arbre )
+{
+    textcolor(10);
+    if( arbre != NULL )
+    {
+
+        Afficher2( arbre->gauche ) ;
+        printf( "%d " , arbre->valeur ) ;
+        Afficher2( arbre->droit ) ;
+    }
+
+}
+void Afficher3( TArbre arbre )
+{
+
+    if( arbre != NULL )
+    {
+
+        Afficher3( arbre->gauche ) ;
+        Afficher3( arbre->droit ) ;
+        printf( "%d " , arbre->valeur ) ;
+    }
+}
+
+//**************************************************************
+
+int NombreElements( TArbre arbre )
+{
+    if( arbre == NULL )
+    {
+        return (0) ;
+    }
+    else
+    {
+        return( 1 + NombreElements( arbre->gauche ) + NombreElements( arbre->droit ) ) ;
+    }
+}
+//**************************************************************
+
+int Hauteur( TArbre arbre )
+{
+    int hg=0,hd=0,h=0 ;
+    if( arbre == NULL )
+         h=0;
+    else
+    {
+        hg = Hauteur( arbre->gauche ) ;
+        hd = Hauteur( arbre->droit ) ;
+
+       	h=(hg>hd?hg:hd)+1;
+    }
+    return h;
+}
+//***************************************************************
+
+int Somme( TArbre arbre )
+{
+    if( arbre == NULL )
+    {
+        return (0) ;
+    }
+    else
+    {
+        return ( arbre->valeur + Somme( arbre->droit ) + Somme( arbre->gauche ) ) ;
+    }
+}
+//***************************************************************
+
+int delElement(TArbre* arbre, int info)
+{
+	TArbre temp=NULL; //pointeur temporaire pour le free
+	TArbre temp2=NULL;
+	int infotemp=0;
+	int ElementSupprime=false;
+
+	if(*arbre == NULL)
+			ElementSupprime=false;
+		else
+		{
+			if((*arbre)->valeur<info)
+				ElementSupprime=delElement(&(*arbre)->droit,info);
+
+			else if((*arbre)->valeur>info)
+				ElementSupprime=delElement(&(*arbre)->gauche,info);
+
+			else
+			{
+				ElementSupprime=true;//on a trouvé notre élément
+				if((*arbre)->gauche==NULL)//rien a gauche
+				{
+					temp=*arbre;
+					(*arbre)=(*arbre)->droit;//on suit vers la droite
+					free(temp);
+				}//!head->fg
+				else//il ya a gauche
+				{
+					if((*arbre)->droit==NULL)//rien a droite
+					{
+						temp=*arbre;
+						(*arbre)=(*arbre)->gauche;//on suit vers la gauche
+						free(temp);
+					}
+					else//il y a aussi a droite
+					{
+						//il faut remplacer l'élément par le plus petit élément de son
+						//sous arbre droit
+						//on va chercher le plus petit
+						temp=(*arbre);
+						//on va déplacer temp d'un cran à droite
+						temp=temp->droit;
+						while(temp->gauche)
+						{
+							temp2=temp;//on garde le précédent
+							temp=temp->gauche;
+
+						}
+
+						//ici, temp n'a plus de fils gauche, c'est donc le plus petit élément
+						//on le supprime
+						infotemp=temp->valeur;//on conserve l'info
+						if(temp->droit) //il y a du monde a droite, on bouge notre arbre
+						{
+							temp2->gauche=temp->droit;//fait un pont
+							free(temp);//on libère notre élément
+						}
+						//on peut faire remonter l'info
+						(*arbre)->valeur=infotemp;
+						ElementSupprime=true;//ok suppression effectuée
+
+					}
+				}//if head->fg!=NULL
+			}
+		}//head != NULL
+	return ElementSupprime;
+}
+//***********************************************************
+int nb_pos(int a)
+{
+    int ret;
+    int b=a;
+    for(ret=1;a/10;ret++,a/=10);
+    if (b<0) ret++;
+    return ret;
+}
+
+void DrawTree_Horizonral(TArbre arbre,char type, int x, int y,int level)
+{
+    if(arbre!=NULL)
+    {
+        int a=level-1;
+        switch (type)
+        {
+            case 'r'://racine
+            /*on calcule les coordonées du racine slon le profonder de l'arbre ...*/
+            x=1;
+            y=pow(2,Hauteur(arbre)-1);
+            gotoxy(x,y);
+            printf("[%d]",arbre->valeur);
+            printf("%c%c",196,180);
+            DrawTree_Horizonral(arbre->droit,'d',x+nb_pos(arbre->valeur)+3,y-1,Hauteur(arbre));
+            DrawTree_Horizonral(arbre->gauche,'g',x+nb_pos(arbre->valeur)+3,y+1,Hauteur(arbre));
+            break;
+
+            case 'd'://droit
+
+            while(a>=0)
+            {
+                a--;
+                gotoxy(x,y);
+                y--;
+                printf("%c",179);
+            }
+            gotoxy(x,y);
+            printf("%c",218);
+            textcolor(10);
+            printf("(%d)",arbre->valeur);
+            textcolor(15);
+            printf("%c%c",196,180);
+            DrawTree_Horizonral(arbre->droit,'d',x+nb_pos(arbre->valeur)+2+2,y-1,Hauteur(arbre)-1);
+            DrawTree_Horizonral(arbre->gauche,'g',x+nb_pos(arbre->valeur)+2+2,y+1,Hauteur(arbre)-1);
+
+            break;
+
+            case 'g'://gauche
+            textcolor(15);
+            while(a>=0)
+            {
+                a--;
+                gotoxy(x,y);
+                y++;
+                printf("%c",179);
+            }
+            gotoxy(x,y);
+            printf("%c",192);
+            textcolor(12);
+            printf("(%d)",arbre->valeur);
+            textcolor(15);
+            printf("%c%c",196,180);
+            DrawTree_Horizonral(arbre->droit,'d',x+nb_pos(arbre->valeur)+2+2,y-1,Hauteur(arbre)-1);
+            DrawTree_Horizonral(arbre->gauche,'g',x+nb_pos(arbre->valeur)+2+2,y+1,Hauteur(arbre)-1);
+            break;
+        }
+
+    }else
+     {
+
+        gotoxy(x,y);
+        if(type=='d')
+        printf("%c%c",218,196);
+        else
+        printf("%c%c",192,196);;
+        textcolor(14);
+        printf("%c",16);
+        textcolor(7);
+     }
+}
